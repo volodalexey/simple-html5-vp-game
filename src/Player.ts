@@ -268,7 +268,7 @@ export class Player extends Container {
   restart (): void {
     this.velocity.vx = 0
     this.velocity.vy = 0
-    this.setPosition({ x: 50, y: 100 })
+    this.setPosition({ x: 100, y: 50 })
     this.setState(EPlayerState.idleRight)
   }
 
