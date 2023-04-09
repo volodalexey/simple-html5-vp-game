@@ -31,7 +31,7 @@ export class Game extends Container {
   public maxYPivot = 0
 
   static options = {
-    maxTime: 1000000,
+    maxTime: 25000,
     scale: 4,
     camerabox: {
       offset: {
@@ -80,25 +80,25 @@ export class Game extends Container {
     this.statusBar = new StatusBar()
     this.addChild(this.statusBar)
 
-    this.addChild(this.floorCollisionBlocks)
-    this.addChild(this.platformCollisionBlocks)
+    this.background.addChild(this.floorCollisionBlocks)
+    this.background.addChild(this.platformCollisionBlocks)
 
     this.player = new Player({ game: this, textures: warriorTextures })
-    this.addChild(this.player)
+    this.background.addChild(this.player)
 
     this.camerabox.beginFill(0xffff00)
     this.camerabox.drawRect(0, 0, Game.options.camerabox.initWidth, Game.options.camerabox.initHeight)
     this.camerabox.endFill()
     this.camerabox.alpha = logCameraboxBounds.enabled ? 0.5 : 0
-    this.addChild(this.camerabox)
+    this.background.addChild(this.camerabox)
 
-    this.inputHandler = new InputHandler({ eventTarget: this, relativeToTarget: this.player })
+    this.inputHandler = new InputHandler({ eventTarget: this.background, relativeToTarget: this.player })
 
     this.startModal = new StartModal({ viewWidth, viewHeight })
     this.startModal.visible = false
     this.addChild(this.startModal)
 
-    this.scale.set(Game.options.scale)
+    this.background.scale.set(Game.options.scale)
   }
 
   getCameraboxBounds (): IBoundsData {
@@ -124,7 +124,7 @@ export class Game extends Container {
 
   getViewportBounds (scale: number): IBoundsData {
     const { viewWidth, viewHeight } = this
-    const { pivot: { x, y } } = this
+    const { background: { pivot: { x, y } } } = this
     const bounds = {
       top: y,
       right: x + viewWidth * scale,
@@ -159,17 +159,20 @@ export class Game extends Container {
   }): void {
     this.viewWidth = viewWidth
     this.viewHeight = viewHeight
-    if (this.width > viewWidth) {
-      this.maxXPivot = (this.width - viewWidth) / this.scale.x
+    const { width, height, scale } = this.background
+    if (width > viewWidth) {
+      this.maxXPivot = (width - viewWidth) / scale.x
     } else {
       this.maxXPivot = 0
     }
-    if (this.height > viewHeight) {
-      this.maxYPivot = (this.height - viewHeight) / this.scale.y
+    if (height > viewHeight) {
+      this.maxYPivot = (height - viewHeight) / scale.y
     } else {
       this.maxYPivot = 0
     }
-    logLayout(`x=${this.x} y=${this.y} w=${this.width} h=${this.height}`)
+    logLayout(`x=${this.x} y=${this.y} w=${width} h=${height}`)
+    this.statusBar.position.set(viewWidth / 2 - this.statusBar.width / 2, 0)
+    this.startModal.position.set(viewWidth / 2 - this.startModal.width / 2, viewHeight / 2 - this.startModal.height / 2)
   }
 
   handleUpdate (deltaMS: number): void {
@@ -191,25 +194,26 @@ export class Game extends Container {
     const cameraboxBounds = this.getCameraboxBounds()
     const viewportBounds = this.getViewportBounds(1 / Game.options.scale)
     logViewportBounds(`top=${viewportBounds.top} right=${viewportBounds.right} bottom=${viewportBounds.bottom} left=${viewportBounds.left}`)
+    const { pivot } = this.background
     if (cameraboxBounds.top < viewportBounds.top) {
-      this.pivot.y -= viewportBounds.top - cameraboxBounds.top
+      pivot.y -= viewportBounds.top - cameraboxBounds.top
     } else if (cameraboxBounds.bottom > viewportBounds.bottom) {
-      this.pivot.y += cameraboxBounds.bottom - viewportBounds.bottom
+      pivot.y += cameraboxBounds.bottom - viewportBounds.bottom
     }
     if (cameraboxBounds.left < viewportBounds.left) {
-      this.pivot.x -= viewportBounds.left - cameraboxBounds.left
+      pivot.x -= viewportBounds.left - cameraboxBounds.left
     } else if (cameraboxBounds.right > viewportBounds.right) {
-      this.pivot.x += cameraboxBounds.right - viewportBounds.right
+      pivot.x += cameraboxBounds.right - viewportBounds.right
     }
-    if (this.pivot.x < 0) {
-      this.pivot.x = 0
-    } else if (this.pivot.x > this.maxXPivot) {
-      this.pivot.x = this.maxXPivot
+    if (pivot.x < 0) {
+      pivot.x = 0
+    } else if (pivot.x > this.maxXPivot) {
+      pivot.x = this.maxXPivot
     }
-    if (this.pivot.y < 0) {
-      this.pivot.y = 0
-    } else if (this.pivot.y > this.maxYPivot) {
-      this.pivot.y = this.maxYPivot
+    if (pivot.y < 0) {
+      pivot.y = 0
+    } else if (pivot.y > this.maxYPivot) {
+      pivot.y = this.maxYPivot
     }
   }
 

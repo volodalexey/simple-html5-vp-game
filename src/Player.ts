@@ -253,6 +253,14 @@ export class Player extends Container {
     } else {
       this.velocity.vx = 0
     }
+    const playerBounds = this.getHitboxBounds({ addXVelocity: true })
+    if (playerBounds.left < this.game.x) {
+      this.velocity.vx = 0
+      this.setPosition({ x: this.game.x })
+    } else if (playerBounds.right > this.game.background.texture.width) {
+      this.velocity.vx = 0
+      this.setPosition({ x: this.game.background.texture.width - this.hitbox.width })
+    }
 
     const horizontalBlock = this.checkForHorizontalCollisions()
     if (horizontalBlock == null) {
@@ -300,7 +308,6 @@ export class Player extends Container {
   }
 
   checkForVerticalCollisions (): CollisionBlock | undefined {
-    // const { gravity } = Player.options
     const playerBounds = this.getHitboxBounds()
     const nextPlayerBottom = playerBounds.bottom + this.velocity.vy
     let groundBlock = this.game.floorCollisionBlocks.children.find(collisionBlock => {

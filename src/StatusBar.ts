@@ -6,7 +6,7 @@ export class StatusBar extends Container {
     textColor: 0xbb5857,
     textColorShadow: 0x98cbd8,
     textShadowOffset: 0.5,
-    textSize: 20
+    textSize: 40
   }
 
   public timeText!: Text
@@ -34,16 +34,18 @@ export class StatusBar extends Container {
 
     const timeTextShadow = new Text(StatusBar.getTimeText(0), {
       fontSize: textSize * 0.8,
-      fill: textColorShadow
+      fill: textColorShadow,
+      align: 'center'
     })
-    timeTextShadow.position.set(padding, padding)
+    timeTextShadow.position.set(0, padding)
     this.addChild(timeTextShadow)
     this.timeTextShadow = timeTextShadow
     const timeText = new Text(StatusBar.getTimeText(0), {
       fontSize: textSize * 0.8,
-      fill: textColor
+      fill: textColor,
+      align: 'center'
     })
-    timeText.position.set(padding + textShadowOffset, padding + textShadowOffset)
+    timeText.position.set(0 + textShadowOffset, padding + textShadowOffset)
     this.addChild(timeText)
     this.timeText = timeText
   }
