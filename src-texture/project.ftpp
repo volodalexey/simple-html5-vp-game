@@ -1,0 +1,236 @@
+{
+  "meta": {
+    "version": "0.6.7"
+  },
+  "savePath": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture",
+  "images": [
+    {
+      "name": "Warrior-Fall-Left-0.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Fall-Left-0.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Fall-Left-1.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Fall-Left-1.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Fall-Right-0.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Fall-Right-0.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Fall-Right-1.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Fall-Right-1.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Idle-Left-0.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Idle-Left-0.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Idle-Left-1.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Idle-Left-1.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Idle-Left-2.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Idle-Left-2.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Idle-Left-3.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Idle-Left-3.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Idle-Left-4.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Idle-Left-4.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Idle-Left-5.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Idle-Left-5.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Idle-Left-6.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Idle-Left-6.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Idle-Left-7.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Idle-Left-7.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Idle-Right-0.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Idle-Right-0.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Idle-Right-1.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Idle-Right-1.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Idle-Right-2.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Idle-Right-2.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Idle-Right-3.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Idle-Right-3.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Idle-Right-4.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Idle-Right-4.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Idle-Right-5.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Idle-Right-5.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Idle-Right-6.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Idle-Right-6.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Idle-Right-7.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Idle-Right-7.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Jump-Left-0.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Jump-Left-0.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Jump-Left-1.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Jump-Left-1.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Jump-Right-0.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Jump-Right-0.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Jump-Right-1.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Jump-Right-1.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Run-Left-0.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Run-Left-0.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Run-Left-1.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Run-Left-1.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Run-Left-2.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Run-Left-2.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Run-Left-3.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Run-Left-3.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Run-Left-4.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Run-Left-4.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Run-Left-5.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Run-Left-5.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Run-Left-6.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Run-Left-6.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Run-Left-7.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Run-Left-7.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Run-Right-0.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Run-Right-0.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Run-Right-1.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Run-Right-1.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Run-Right-2.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Run-Right-2.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Run-Right-3.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Run-Right-3.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Run-Right-4.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Run-Right-4.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Run-Right-5.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Run-Right-5.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Run-Right-6.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Run-Right-6.png",
+      "folder": ""
+    },
+    {
+      "name": "Warrior-Run-Right-7.png",
+      "path": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture/Warrior-Run-Right-7.png",
+      "folder": ""
+    }
+  ],
+  "folders": [],
+  "packOptions": {
+    "textureName": "spritesheet",
+    "textureFormat": "png",
+    "removeFileExtension": false,
+    "prependFolderName": true,
+    "base64Export": false,
+    "tinify": false,
+    "tinifyKey": "",
+    "scale": 1,
+    "filter": "none",
+    "exporter": "JSON (hash)",
+    "fileName": "pack-result",
+    "savePath": "/mnt/mystorage/js_projects/simple-html5-vp-game/src-texture",
+    "width": 2048,
+    "height": 2048,
+    "fixedSize": false,
+    "powerOfTwo": false,
+    "padding": 1,
+    "extrude": 0,
+    "allowRotation": false,
+    "allowTrim": true,
+    "trimMode": "trim",
+    "alphaThreshold": "0",
+    "detectIdentical": true,
+    "packer": "MaxRectsPacker",
+    "packerMethod": "Smart"
+  }
+}
