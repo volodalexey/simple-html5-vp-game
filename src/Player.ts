@@ -48,16 +48,17 @@ export class Player extends Container {
     },
     offset: {
       x: 0,
-      y: 20
+      y: 10
     },
-    width: 35,
-    height: 60
+    width: 17,
+    height: 30
   }
 
   static options = {
-    moveSpeed: 5,
-    jumpSpeed: 25,
-    gravity: 1,
+    scale: 0.5,
+    moveSpeed: 2,
+    jumpSpeed: 4,
+    gravity: 0.1,
     idleAnimationSpeed: 0.2,
     jumpFallAnimationSpeed: 0.2,
     runAnimationSpeed: 0.2
@@ -171,6 +172,8 @@ export class Player extends Container {
 
     jumpLeftAnimation.animationSpeed = jumpRightAnimation.animationSpeed =
     fallLeftAnimation.animationSpeed = fallRightAnimation.animationSpeed = jumpFallAnimationSpeed
+
+    spritesContainer.scale.set(Player.options.scale)
   }
 
   hideAllAnimations (): void {
@@ -250,80 +253,101 @@ export class Player extends Container {
     } else {
       this.velocity.vx = 0
     }
-    this.x += this.velocity.vx
 
-    this.checkForHorizontalCollisions()
-    this.applyGravity()
-    this.checkForVerticalCollisions()
+    const horizontalBlock = this.checkForHorizontalCollisions()
+    if (horizontalBlock == null) {
+      this.x += this.velocity.vx
+    }
+
+    this.groundBlock = this.checkForVerticalCollisions()
+    if (this.groundBlock == null) {
+      this.applyGravity()
+    }
   }
 
   restart (): void {
     this.velocity.vx = 0
     this.velocity.vy = 0
-    this.setPosition({ x: 0, y: 0 })
+    this.setPosition({ x: 50, y: 100 })
     this.setState(EPlayerState.idleRight)
   }
 
-  checkForHorizontalCollisions (): void {
-    this.updateHitbox()
-    const playerBounds = this.getHitboxBounds()
+  checkForHorizontalCollisions (): CollisionBlock | undefined {
+    const playerBounds = this.getHitboxBounds({ addXVelocity: true })
 
-    for (let i = 0; i < this.game.collisionBlocks.children.length; i++) {
-      const collisionBlock = this.game.collisionBlocks.children[i]
+    return this.game.floorCollisionBlocks.children.find(collisionBlock => {
       const blockBounds = collisionBlock.getRectBounds()
-
       if (
         playerBounds.left <= blockBounds.right &&
         playerBounds.right >= blockBounds.left &&
-        playerBounds.bottom >= blockBounds.top &&
-        playerBounds.top <= blockBounds.bottom
+        playerBounds.bottom > blockBounds.top &&
+        playerBounds.top < blockBounds.bottom
       ) {
         if (this.velocity.vx < 0) {
-          this.setPosition({ x: blockBounds.right + 1 })
-          break
+          this.velocity.vx = 0
+          this.setPosition({ x: blockBounds.right })
+          return true
         }
 
         if (this.velocity.vx > 0) {
-          this.setPosition({ x: blockBounds.left - this.hitbox.width - 1 })
-          break
+          this.velocity.vx = 0
+          this.setPosition({ x: blockBounds.left - this.hitbox.width })
+          return true
         }
       }
-    }
+      return false
+    })
   }
 
-  checkForVerticalCollisions (): void {
-    this.updateHitbox()
+  checkForVerticalCollisions (): CollisionBlock | undefined {
+    // const { gravity } = Player.options
     const playerBounds = this.getHitboxBounds()
-    this.groundBlock = undefined
-    for (let i = 0; i < this.game.collisionBlocks.children.length; i++) {
-      const collisionBlock = this.game.collisionBlocks.children[i]
+    const nextPlayerBottom = playerBounds.bottom + this.velocity.vy
+    let groundBlock = this.game.floorCollisionBlocks.children.find(collisionBlock => {
+      const blockBounds = collisionBlock.getRectBounds()
+      const collideByX = playerBounds.left <= blockBounds.right && playerBounds.right >= blockBounds.left
+      if (!collideByX) {
+        return false
+      }
+      if (
+        playerBounds.bottom <= blockBounds.top && nextPlayerBottom > blockBounds.top
+      ) {
+        this.velocity.vy = 0
+        this.groundBlock = collisionBlock
+        this.setPosition({ y: blockBounds.top - this.hitbox.height })
+        return true
+      }
+
+      return false
+    })
+
+    if (groundBlock != null) {
+      return groundBlock
+    }
+
+    groundBlock = this.game.platformCollisionBlocks.children.find(collisionBlock => {
       const blockBounds = collisionBlock.getRectBounds()
 
-      if (
-        playerBounds.left <= blockBounds.right &&
-        playerBounds.right >= blockBounds.left &&
-        playerBounds.bottom >= blockBounds.top &&
-        playerBounds.top <= blockBounds.bottom
-      ) {
-        if (this.velocity.vy < 0) {
-          this.velocity.vy = 0
-          this.setPosition({ y: blockBounds.bottom + 1 })
-          break
-        }
-
-        if (this.velocity.vy > 0) {
-          this.velocity.vy = 0
-          this.groundBlock = collisionBlock
-          this.setPosition({ y: blockBounds.top - this.hitbox.height - 1 })
-          break
-        }
+      const collideByX = playerBounds.left <= blockBounds.right && playerBounds.right >= blockBounds.left
+      if (!collideByX) {
+        return false
       }
-    }
+      if (playerBounds.bottom <= blockBounds.top && nextPlayerBottom > blockBounds.top) {
+        this.velocity.vy = 0
+        this.groundBlock = collisionBlock
+        this.setPosition({ y: blockBounds.top - this.hitbox.height })
+        return true
+      }
+      return false
+    })
+
+    return groundBlock
   }
 
   applyGravity (): void {
-    this.velocity.vy += Player.options.gravity
     this.position.y += this.velocity.vy
+    this.velocity.vy += Player.options.gravity
+    // this.velocity.vy = Number(this.velocity.vy.toFixed(2))
   }
 
   updateHitbox (): void {
@@ -342,17 +366,27 @@ export class Player extends Container {
     }
   }
 
-  getHitboxBounds (): {
+  getHitboxBounds ({ addXVelocity = false, addYVelocity = false } = {}): {
     top: number
     right: number
     bottom: number
     left: number
   } {
-    return {
+    this.updateHitbox()
+    const bounds = {
       top: this.hitbox.position.y,
       right: this.hitbox.position.x + this.hitbox.width,
       bottom: this.hitbox.position.y + this.hitbox.height,
       left: this.hitbox.position.x
     }
+    if (addXVelocity) {
+      bounds.left += this.velocity.vx
+      bounds.right += this.velocity.vx
+    }
+    if (addYVelocity) {
+      bounds.top += this.velocity.vy
+      bounds.bottom += this.velocity.vy
+    }
+    return bounds
   }
 }

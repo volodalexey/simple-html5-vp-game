@@ -4,14 +4,15 @@ import { logCollisionBlock } from './logger'
 interface ICollisionBlockOptions {
   initX: number
   initY: number
-  cell: number
+  initWidth: number
+  initHeight: number
 }
 
 export class CollisionBlock extends Graphics {
-  constructor ({ initX, initY, cell }: ICollisionBlockOptions) {
+  constructor ({ initX, initY, initWidth, initHeight }: ICollisionBlockOptions) {
     super()
     this.beginFill(0xff0000)
-    this.drawRect(0, 0, cell, cell)
+    this.drawRect(0, 0, initWidth, initHeight)
     this.endFill()
     this.alpha = logCollisionBlock.enabled ? 0.5 : 0
     this.position.set(initX, initY)

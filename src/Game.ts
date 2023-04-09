@@ -1,11 +1,11 @@
-import { Container, TilingSprite, type Texture, Graphics } from 'pixi.js'
+import { Container, Sprite, type Texture, Graphics } from 'pixi.js'
 import { type IPlayerOptions, Player } from './Player'
 import { StatusBar } from './StatusBar'
 import { StartModal } from './StartModal'
 import { InputHandler } from './InputHandler'
 import { CollisionBlock } from './CollisionBlock'
 import { type IMapSettings, MapSettings } from './MapSettings'
-import { logCameraboxBounds, logLayout } from './logger'
+import { logCameraboxBounds, logLayout, logViewportBounds } from './logger'
 
 export interface IGameOptions {
   viewWidth: number
@@ -29,11 +29,15 @@ export class Game extends Container {
   public time = 0
 
   static options = {
-    maxTime: 2500000,
-    scale: 4,
+    maxTime: 1000000,
+    scale: 3,
     camerabox: {
-      initWidth: 200,
-      initHeight: 80
+      offset: {
+        x: -42,
+        y: -34
+      },
+      initWidth: 100,
+      initHeight: 100
     }
   }
 
@@ -41,11 +45,12 @@ export class Game extends Container {
   public viewHeight: number
   public player!: Player
   public inputHandler!: InputHandler
-  public background!: TilingSprite
+  public background!: Sprite
   public statusBar!: StatusBar
   public startModal!: StartModal
   public camerabox = new Graphics()
-  public collisionBlocks = new Container<CollisionBlock>()
+  public floorCollisionBlocks = new Container<CollisionBlock>()
+  public platformCollisionBlocks = new Container<CollisionBlock>()
   constructor (options: IGameOptions) {
     super()
 
@@ -66,14 +71,16 @@ export class Game extends Container {
       warriorTextures
     }
   }: IGameOptions): void {
-    const background = new TilingSprite(levelBackgroundTexture, viewWidth, viewHeight)
+    // const background = new TilingSprite(levelBackgroundTexture, viewWidth, viewHeight)
+    const background = new Sprite(levelBackgroundTexture)
     this.addChild(background)
     this.background = background
 
     this.statusBar = new StatusBar()
     this.addChild(this.statusBar)
 
-    this.addChild(this.collisionBlocks)
+    this.addChild(this.floorCollisionBlocks)
+    this.addChild(this.platformCollisionBlocks)
 
     this.player = new Player({ game: this, textures: warriorTextures })
     this.addChild(this.player)
@@ -91,37 +98,56 @@ export class Game extends Container {
     this.addChild(this.startModal)
 
     this.scale.set(Game.options.scale)
-    this.background.tileScale.set(Game.options.scale)
+    // this.background.scale.set(Game.options.scale)
+    // this.player.scale.set(Game.options.scale)
+    // this.background.tileScale.set(Game.options.scale)
   }
 
-  getCameraboxBounds (scaled = true): IBoundsData {
-    const { scale } = Game.options
+  getCameraboxBounds (scale?: number): IBoundsData {
+    const { velocity: { vx, vy } } = this.player
     const { x, y, width, height } = this.camerabox
-    const ret = {
-      top: scaled ? y * scale : y,
-      right: scaled ? (x + width) * scale : x + width,
-      bottom: scaled ? (y + height) * scale : y + height,
-      left: scaled ? x * scale : x
-    }
-    return ret
-  }
-
-  updateCamerabox (): void {
-    this.camerabox.position = {
-      x: this.player.hitbox.position.x - 50,
-      y: this.player.hitbox.position.y
-    }
-  }
-
-  getViewportBounds (): IBoundsData {
-    const { tilePosition: { x, y }, width, height } = this.background
-    const ret = {
+    const bounds: IBoundsData = {
       top: y,
       right: x + width,
       bottom: y + height,
       left: x
     }
-    return ret
+    if (typeof scale === 'number') {
+      bounds.top = scale * bounds.top
+      bounds.right = scale * bounds.right
+      bounds.bottom = scale * bounds.bottom
+      bounds.left = scale * bounds.left
+    }
+    // const bounds = this.camerabox.getBounds()
+    return bounds
+  }
+
+  updateCamerabox (): void {
+    const { position } = this.player.hitbox
+    const { offset: { x, y } } = Game.options.camerabox
+    this.camerabox.position = {
+      x: position.x + x,
+      y: position.y + y
+    }
+  }
+
+  getViewportBounds (scale: number): IBoundsData {
+    // const { tilePosition: { x, y }, width, height } = this.background
+    const { viewWidth, viewHeight } = this
+    const { pivot: { x, y } } = this
+    const bounds = {
+      top: y,
+      right: x + viewWidth,
+      bottom: y + viewHeight,
+      left: x
+    }
+    if (typeof scale === 'number') {
+      bounds.top = scale * bounds.top
+      bounds.right = scale * bounds.right
+      bounds.bottom = scale * bounds.bottom
+      bounds.left = scale * bounds.left
+    }
+    return bounds
   }
 
   addEventLesteners (): void {
@@ -172,7 +198,9 @@ export class Game extends Container {
     const { player } = this
     player.updateHitbox()
     this.updateCamerabox()
+    // const cameraboxBounds = this.getCameraboxBounds(this.scale.x)
     const cameraboxBounds = this.getCameraboxBounds()
+    // const cameraboxBounds = this.getLocalBounds(this.camerabox.getLocalBounds())
     // this.background.tilePosition.x = -this.player.x
     // this.background.tilePosition.y = -this.player.y
 
@@ -181,43 +209,67 @@ export class Game extends Container {
     // } else if (player.velocity.vy > 0) {
     //   this.shouldPanCameraUp(cameraboxBounds)
     // }
-    const { scale } = Game.options
-    const viewportBounds = this.getViewportBounds()
+    // const { scale } = Game.options
+    const viewportBounds = this.getViewportBounds(1 / Game.options.scale)
+    // if (cameraboxBounds.bottom > viewportBounds.bottom) {
+    //   console.log(`vb-top=${viewportBounds.top} vb-bottom=${viewportBounds.bottom}`)
+    //   console.log(`Before pivot.y=${this.pivot.y}`)
+    //   this.pivot.y += (cameraboxBounds.bottom - viewportBounds.bottom) / scale
+    //   console.log(`After pivot.y=${this.pivot.y}`)
+    // } else if (cameraboxBounds.top < viewportBounds.top) {
+    //   this.pivot.y -= (viewportBounds.top - cameraboxBounds.top) / scale
+    // }
+    // if (cameraboxBounds.right > viewportBounds.right) {
+    //   this.pivot.x += (cameraboxBounds.right - viewportBounds.right) / scale
+    // } else if (cameraboxBounds.left < viewportBounds.left) {
+    //   this.pivot.x -= (viewportBounds.left - cameraboxBounds.left) / scale
+    // }
+    logViewportBounds.ifChanged(viewportBounds.top, viewportBounds.right, viewportBounds.bottom, viewportBounds.left)
+    // logCameraboxBounds.ifChanged(cameraboxBounds.top, cameraboxBounds.right, cameraboxBounds.bottom, cameraboxBounds.left)
+    // this.pivot.x = player.x
+    this.pivot.y = this.camerabox.y - this.camerabox.height
     if (cameraboxBounds.bottom > viewportBounds.bottom) {
-      this.background.tilePosition.y -= (cameraboxBounds.bottom - viewportBounds.bottom) / scale
+      // this.pivot.y += (cameraboxBounds.bottom - viewportBounds.bottom) / Game.options.scale
+      //   console.log(`vb-top=${viewportBounds.top} vb-bottom=${viewportBounds.bottom}`)
+      //   console.log(`Before pivot.y=${this.pivot.y}`)
+      //   this.pivot.y += (cameraboxBounds.bottom - viewportBounds.bottom) / scale
+      //   console.log(`After pivot.y=${this.pivot.y}`)
+      // } else if (cameraboxBounds.top < viewportBounds.top) {
+      //   this.pivot.y -= (viewportBounds.top - cameraboxBounds.top) / scale
+      // }
     }
   }
 
   shouldPanCameraUp (cameraboxBounds: IBoundsData): void {
-    const { player, camerabox, background, viewHeight } = this
+    // const { player, camerabox, background, viewHeight } = this
 
-    const { scale } = Game.options
-    // const scaledCanvasHeight = this.height / Game.options.scale
+    // const { scale } = Game.options
+    // // const scaledCanvasHeight = this.height / Game.options.scale
+    // // if (
+    // //   cameraboxBounds.bottom + player.velocity.vy * scale >=
+    // //   viewHeight
+    // // ) { return }
+
     // if (
-    //   cameraboxBounds.bottom + player.velocity.vy * scale >=
-    //   viewHeight
-    // ) { return }
-
-    if (
-      cameraboxBounds.bottom >=
-      Math.abs(background.tilePosition.y) + viewHeight
-    ) {
-      background.tilePosition.y -= player.velocity.vy * scale
-    }
+    //   cameraboxBounds.bottom >=
+    //   Math.abs(background.tilePosition.y) + viewHeight
+    // ) {
+    //   background.tilePosition.y -= player.velocity.vy * scale
+    // }
   }
 
   shouldPanCameraDown (cameraboxBounds: IBoundsData): void {
-    const { player, camerabox, background } = this
-    if (camerabox.position.y + player.velocity.vy <= 0) return
+    // const { player, camerabox, background } = this
+    // if (camerabox.position.y + player.velocity.vy <= 0) return
 
-    if (camerabox.position.y <= Math.abs(background.tilePosition.y)) {
-      background.position.y -= player.velocity.vy
-    }
+    // if (camerabox.position.y <= Math.abs(background.tilePosition.y)) {
+    //   background.position.y -= player.velocity.vy
+    // }
   }
 
   initLevel ({ levelSettings }: IGameOptions): void {
     const cell = 16
-    const collisionPoints = MapSettings.mapTileToPositions({
+    const floorCollisionPoints = MapSettings.mapTileToPositions({
       mapSettings: levelSettings,
       layerName: 'FloorCollisions',
       tileIds: [202],
@@ -225,11 +277,29 @@ export class Game extends Container {
       cell
     })
 
-    collisionPoints.forEach(cp => {
-      this.collisionBlocks.addChild(new CollisionBlock({
+    floorCollisionPoints.forEach(cp => {
+      this.floorCollisionBlocks.addChild(new CollisionBlock({
         initX: cp.x,
         initY: cp.y,
-        cell
+        initWidth: cell,
+        initHeight: cell
+      }))
+    })
+
+    const platformCollisionPoints = MapSettings.mapTileToPositions({
+      mapSettings: levelSettings,
+      layerName: 'PlatformCollisions',
+      tileIds: [202],
+      tilesPerRow: 36,
+      cell
+    })
+
+    platformCollisionPoints.forEach(cp => {
+      this.platformCollisionBlocks.addChild(new CollisionBlock({
+        initX: cp.x,
+        initY: cp.y,
+        initWidth: cell,
+        initHeight: cell / 2
       }))
     })
 

@@ -12,7 +12,15 @@ export class InputHandler {
   public pointerXDown: number | null = null
   public pointerYDown: number | null = null
   public eventTarget!: Container
-  public relativeToTarget?: Container
+  public relativeToTarget?: Container & {
+    getHitboxBounds?: () => {
+      top: number
+      right: number
+      bottom: number
+      left: number
+    }
+  }
+
   public interactiveChildren!: boolean
   constructor ({ eventTarget, relativeToTarget, interactiveChildren = false }: IInputHandlerOptions) {
     this.eventTarget = eventTarget
@@ -133,12 +141,14 @@ export class InputHandler {
     const { relativeToTarget } = this
     if (pressed === true || (pressed === undefined && this.isPointerDown())) {
       if (relativeToTarget != null) {
-        const bounds = {
-          left: relativeToTarget.x,
-          right: relativeToTarget.x + relativeToTarget.width,
-          top: relativeToTarget.y,
-          bottom: relativeToTarget.y + relativeToTarget.height
-        }
+        const bounds = typeof relativeToTarget.getHitboxBounds === 'function'
+          ? relativeToTarget.getHitboxBounds()
+          : {
+              left: relativeToTarget.x,
+              right: relativeToTarget.x + relativeToTarget.width,
+              top: relativeToTarget.y,
+              bottom: relativeToTarget.y + relativeToTarget.height
+            }
         if (x >= bounds.right) {
           this.pointerXDown = 1
         } else if (x <= bounds.left) {

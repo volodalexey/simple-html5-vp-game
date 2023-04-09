@@ -50,7 +50,7 @@ export class IdleLeft extends PlayerState {
 
   handleInput (): void {
     const { inputHandler, player } = this.game
-    if (inputHandler.hasDirectionUp()) {
+    if (inputHandler.hasDirectionUp() && player.velocity.vy === 0) {
       if (inputHandler.hasDirectionRight()) {
         player.setState(EPlayerState.jumpRight)
       } else {
@@ -76,7 +76,7 @@ export class IdleRight extends PlayerState {
 
   handleInput (): void {
     const { inputHandler, player } = this.game
-    if (inputHandler.hasDirectionUp()) {
+    if (inputHandler.hasDirectionUp() && player.velocity.vy === 0) {
       if (inputHandler.hasDirectionLeft()) {
         player.setState(EPlayerState.jumpLeft)
       } else {
@@ -102,7 +102,7 @@ export class RunLeft extends PlayerState {
 
   handleInput (): void {
     const { inputHandler, player } = this.game
-    if (inputHandler.hasDirectionUp()) {
+    if (inputHandler.hasDirectionUp() && player.velocity.vy === 0) {
       if (inputHandler.hasDirectionRight()) {
         player.setState(EPlayerState.jumpRight)
       } else {
@@ -128,7 +128,7 @@ export class RunRight extends PlayerState {
 
   handleInput (): void {
     const { inputHandler, player } = this.game
-    if (inputHandler.hasDirectionUp()) {
+    if (inputHandler.hasDirectionUp() && player.velocity.vy === 0) {
       if (inputHandler.hasDirectionLeft()) {
         player.setState(EPlayerState.jumpLeft)
       } else {
@@ -156,9 +156,17 @@ export class JumpLeft extends PlayerState {
   }
 
   handleInput (): void {
-    const { player } = this.game
+    const { player, inputHandler } = this.game
     if (player.isFalling()) {
-      player.setState(EPlayerState.fallLeft)
+      if (inputHandler.hasDirectionRight()) {
+        player.setState(EPlayerState.fallRight)
+      } else {
+        player.setState(EPlayerState.fallLeft)
+      }
+    } else if (player.isOnGround()) {
+      player.setState(EPlayerState.runLeft)
+    } else if (inputHandler.hasDirectionRight()) {
+      player.setState(EPlayerState.jumpRight)
     }
   }
 }
@@ -177,9 +185,17 @@ export class JumpRight extends PlayerState {
   }
 
   handleInput (): void {
-    const { player } = this.game
+    const { player, inputHandler } = this.game
     if (player.isFalling()) {
-      player.setState(EPlayerState.fallRight)
+      if (inputHandler.hasDirectionLeft()) {
+        player.setState(EPlayerState.fallLeft)
+      } else {
+        player.setState(EPlayerState.fallRight)
+      }
+    } else if (player.isOnGround()) {
+      player.setState(EPlayerState.runRight)
+    } else if (inputHandler.hasDirectionLeft()) {
+      player.setState(EPlayerState.jumpLeft)
     }
   }
 }
@@ -195,9 +211,11 @@ export class FallLeft extends PlayerState {
   }
 
   handleInput (): void {
-    const { player } = this.game
+    const { player, inputHandler } = this.game
     if (player.isOnGround()) {
       player.setState(EPlayerState.runLeft)
+    } else if (inputHandler.hasDirectionRight()) {
+      player.setState(EPlayerState.fallRight)
     }
   }
 }
@@ -213,9 +231,11 @@ export class FallRight extends PlayerState {
   }
 
   handleInput (): void {
-    const { player } = this.game
+    const { player, inputHandler } = this.game
     if (player.isOnGround()) {
       player.setState(EPlayerState.runRight)
+    } else if (inputHandler.hasDirectionLeft()) {
+      player.setState(EPlayerState.fallLeft)
     }
   }
 }
