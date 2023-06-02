@@ -354,7 +354,6 @@ export class Player extends Container {
   applyGravity (): void {
     this.position.y += this.velocity.vy
     this.velocity.vy += Player.options.gravity
-    // this.velocity.vy = Number(this.velocity.vy.toFixed(2))
   }
 
   updateHitbox (): void {
